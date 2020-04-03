@@ -1,10 +1,14 @@
-import argparse
-from imgur import funcs
-from time import time as time
-from os import path
+from source import *
 
-parser = argparse.ArgumentParser(description='Download imgur videos',prog='imgur-downloader')
-parser.add_argument('-v','--verbose', action='store_true')
-parser.add_argument('-o','--output', action='store')
-parser.add_argument('-n','--name',dest='rename_all', action='store_true')
-print(parser.parse_args())
+# OSError
+# image.convert('RGB').save()
+
+def main():
+	args = treat_args(get_args())
+	if args['verbose']:
+		printarg(args)
+	link_generator = link_grabber(args['imgur_link'], args['verbose'])
+	link_generator.return_file_objects()
+
+if __name__ == '__main__':
+	main()
