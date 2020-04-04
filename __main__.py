@@ -9,8 +9,7 @@ def main():
         printarg(args)
     link_generator = link_grabber(args['imgur_link'], args['verbose'])
     file_list = link_generator.return_file_objects()
-    dl(file_list, args['verbose'], args['output'], args['rename_each'],
-       args['format'])
+    dl(file_list, args['verbose'], args['output'], args['rename_each'])
 
 
 if __name__ == '__main__':

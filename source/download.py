@@ -46,7 +46,7 @@ will now skip image'.format(link, self.request.status_code))
         clear_lines(7 if self.verbose else 0)
 
 
-def download(imgur_files, verbose, output_file, rename_all, format):
+def download(imgur_files, verbose, output_file, rename_all):
     processed_images = []
     folder = ''
     if output_file:
