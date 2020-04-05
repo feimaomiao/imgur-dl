@@ -3,8 +3,10 @@ __pycache__/
 *.py[cod]
 *$py.class
 */__pycache__/
+*/*/__pycache__/
 test_links
 *.jpg
+imgur-dl
 # C extensions
 *.so
 # Distribution / packaging
