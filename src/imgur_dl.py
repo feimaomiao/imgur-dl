@@ -2,7 +2,7 @@ from time import time
 
 from .source import *
 
-__version__ = '0.0.6'
+__version__ = '0.1.1'
 __author__ = 'Matthew Lam'
 __email__ = 'lcpmatthew@gmail.com'
 
