@@ -1,8 +1,9 @@
 import sys
-from os import mkdir, path
+from os import mkdir, path, rename
 from re import match as re_match
 from time import sleep
 
+from PIL import Image
 from requests import get as req_get
 from tqdm import tqdm
 
@@ -45,36 +46,62 @@ will now skip image'.format(link, self.request.status_code))
             self.default_name)) if self.verbose else None
         clear_lines(7 if self.verbose else 0)
 
+        self.file_path = ''
+        self._name = ''
+
+    @property
+    def name(self):
+        return self._name
+
 
 def download(imgur_files, verbose, output_file, rename_all):
-    processed_images = []
-    folder = ''
-    if output_file:
-        mkdir(output_file) if not path.isdir(output_file) else None
-        folder = output_file + '/'
-    for (count, i) in tqdm(enumerate(imgur_files),
-                           total=len(imgur_files),
-                           desc='downloading_files',
-                           unit='files'):
-        """
-        Singlle image download mode
-        """
-        # sleep(0.5)
-        # sys.stdout.flush()
-        if not rename_all:
+    def _d(imgur_files, verbose, output_file, rename_all):
+        for (count, dlf) in tqdm(enumerate(imgur_files),
+                                 total=len(imgur_files),
+                                 desc='downloading_files',
+                                 unit='files'):
+
             fp = '{folder}{name}.{extension}'.format(
                 folder=folder,
-                name=i.default_name if not output_file else output_file +
-                '_{}'.format(count),
-                extension=i.extension)
+                name=dlf.default_name
+                if not output_file else '{}'.format(count),
+                extension=dlf.extension)
             print('Directly downloading image{filename}\nDestination: {dest}'.
                   format(dest=fp,
-                         filename=i.default_name)) if verbose else None
+                         filename=dlf.default_name
+                         if not output_file else output_file +
+                         '_{}'.format(count))) if verbose else None
             with open(fp, 'wb') as outfile:
-                for chunk in i.request:
+                for chunk in dlf.request:
                     outfile.write(chunk)
                     sleep(0.00001)
             if verbose:
                 sleep(0.03)
-        else:
-            pass
+
+            if rename_all:
+                Image.open(fp).show()
+                final_name = input('What would you like to name this image?')
+                rename(
+                    fp, '{folder}{name}.{extension}'.format(
+                        folder=folder,
+                        name=final_name,
+                        extension=dlf.extension))
+                clear_lines(2) if not verbose else None
+                fp = '{folder}{name}.{extension}'.format(
+                    folder=folder, name=final_name, extension=dlf.extension)
+
+            dlf.file_path = fp
+            dlf._name = '.'.join(fp.split('.')[:-1])
+            yield dlf
+
+    folder = ''
+    if output_file:
+        mkdir(output_file) if not path.isdir(output_file) else None
+        folder = output_file + '/'
+    processed_images = {
+        i
+        for i in _d(imgur_files, verbose, output_file, rename_all)
+    }
+
+    return sorted(processed_images,
+                  key=lambda x: sum([ord(x) for x in x.name]))

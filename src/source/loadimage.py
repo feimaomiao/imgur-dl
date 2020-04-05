@@ -8,16 +8,6 @@ from .download import imgur_object
 from .globfuncs import clear_lines
 
 
-# Photo link
-# https://imgur.com/gallery/oOitM6T
-# Video link
-# https://imgur.com/gallery/yUWbS
-# Gallery link
-# https://imgur.com/gallery/7T1ebb7
-# Error case
-# https://imgur.com/a/as12asd
-# Deleted link
-# https://m.imgur.com/a/JI1Ia3X
 class NetworkError(Exception):
     pass
 
