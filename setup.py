@@ -23,6 +23,7 @@ setuptools.setup(
     long_description=actual_description,
     packages=setuptools.find_packages(),
     long_description_content_type="text/markdown",
+    install_requires = ['lazyloads','tqdm','requests','pillow'],
     url="https://github.com/feimaomiao/imgur-dl",
     classifiers=[
         "Programming Language :: Python :: 3.6",
