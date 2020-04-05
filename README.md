@@ -2,8 +2,6 @@
 CLI for downloading imgur photos and videos
 
 ## To Download
-download the binary code from release  
-or  
 `pip install imgur-dl`
 
 ### Usage
@@ -28,6 +26,10 @@ MIT
 
 ### Credits
 inspired by @alexgisby
+
+#### Why don't I create a binary for the file
+Currently the compiler I'm using does not work fine with tqdm , and the program creates a memory leak
+After the problem is fixed, a binary would be in the release
 
 
 ###### imgur-dl
