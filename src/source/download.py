@@ -19,32 +19,22 @@ VIDEOTYPES = [i for i in DATATYPES if i not in IMAGETYPES]
 
 class imgur_object:
     def __init__(self, link, verbose):
-        sys.stdout.flush()
         self.request = req_get(link)
         self.verbose = verbose
-        print('Requesting {link}'.format(link=link)) if self.verbose else None
         self.success = self.request.status_code == 200
         # When connection returned anything but 200<success>
         if not self.success:
             raise NetworkError(
                 'Warning: Fallback on link {}, connection returned status code {}, \
 will now skip image'.format(link, self.request.status_code))
-        print('Success!\nGetting extension ') if self.verbose else None
         self.extension = link.split('.')[-1]
-        print('Extension {} found!'.format(
-            self.extension)) if self.verbose else None
         if self.extension not in DATATYPES:
             raise TypeError(
                 "Unknown/Unavaliable extension {} is given. Please contact https://github.com/feimaomiao/imgur-downloader use the -v flag"
                 .format(self.extension))
         self.type = "IMAGE" if self.extension in IMAGETYPES else 'VIDEO'
-        print('Media type : {}'.format(
-            self.type.lower())) if self.verbose else None
         self.default_name = re_match(r".+com/([a-zA-Z0-9]+)\.\w+",
                                      link).group(1)
-        print('Default name {} found'.format(
-            self.default_name)) if self.verbose else None
-        clear_lines(7 if self.verbose else 0)
 
         self.file_path = ''
         self._name = ''
@@ -66,11 +56,6 @@ def download(imgur_files, verbose, output_file, rename_all):
                 name=dlf.default_name
                 if not output_file else '{}'.format(count),
                 extension=dlf.extension)
-            print('Directly downloading image{filename}\nDestination: {dest}'.
-                  format(dest=fp,
-                         filename=dlf.default_name
-                         if not output_file else output_file +
-                         '_{}'.format(count))) if verbose else None
             with open(fp, 'wb') as outfile:
                 for chunk in dlf.request:
                     outfile.write(chunk)
@@ -92,16 +77,14 @@ def download(imgur_files, verbose, output_file, rename_all):
 
             dlf.file_path = fp
             dlf._name = '.'.join(fp.split('.')[:-1])
+            del fp
             yield dlf
 
     folder = ''
     if output_file:
         mkdir(output_file) if not path.isdir(output_file) else None
         folder = output_file + '/'
-    processed_images = {
-        i
-        for i in _d(imgur_files, verbose, output_file, rename_all)
-    }
+    processed_images = list(_d(imgur_files, verbose, output_file, rename_all))
 
     return sorted(processed_images,
                   key=lambda x: sum([ord(x) for x in x.name]))

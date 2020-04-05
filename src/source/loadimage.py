@@ -1,6 +1,5 @@
 import re
 
-from lzl import lzlist
 from requests import get as req_get
 from tqdm import tqdm as progress_bar
 
@@ -62,7 +61,7 @@ class link_grabber:
             'Found {length} matched cases, shrinking duplicated lists'.format(
                 length=len(self._reflist))) if self.verbose else None
         # Make the list unique
-        self._uniqlist = lzlist(self._reflist).unique
+        self._uniqlist = list(set(self._reflist))
         # Set the supposed length for the imgur link
         self._supp_len = len(self._uniqlist)
         print('Getting unique values was successful, {} items in total'.format(
@@ -87,18 +86,16 @@ class link_grabber:
 		Function that returnss a list of imgur_object that can be later iterated
 		"""
         print('Loading images from {}'.format(self._link))
-        for count, links in progress_bar(enumerate(
-                self.generate_download_links()),
-                                         unit='connections',
-                                         total=self._supp_len,
-                                         desc='Loading images'):
+        for links in progress_bar(self.generate_download_links(),
+                                  unit='connections',
+                                  total=self._supp_len,
+                                  desc='Loading images'):
             try:
                 req_obj = imgur_object(link=links, verbose=self.verbose)
                 self.files.append(req_obj)
-                if count == 0 and self.verbose: clear_lines(1)
             except NetworkError as ne:
                 print('NetworkError is raised in link {}'.format(
-                    count)) if self.verbose else None
+                    links)) if self.verbose else None
                 print(ne)
             except TypeError as te:
                 print(te)
