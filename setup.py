@@ -21,6 +21,7 @@ setuptools.setup(
     author_email=email,
     description="Imgur downloader",
     long_description=actual_description,
+    packages=['src','src/source'],
     long_description_content_type="text/markdown",
     install_requires = ['lazyloads','tqdm','requests','pillow'],
     url="https://github.com/feimaomiao/imgur-dl",
